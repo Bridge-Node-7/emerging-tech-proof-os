@@ -17,7 +17,7 @@ jobs:
   build-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -107,7 +107,7 @@ jobs:
           NOTES: ${{ github.event.inputs.notes }}
 
       - name: Upload release artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-${{ github.event.inputs.version }}
           path: release-artifacts/
