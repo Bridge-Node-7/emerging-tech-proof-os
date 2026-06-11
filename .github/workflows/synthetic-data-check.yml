@@ -1,0 +1,55 @@
+name: Synthetic Data Safety Check
+
+on:
+  pull_request:
+    paths:
+      - "data/**"
+      - "examples/**"
+      - "docs/examples/**"
+      - "docs/playbooks/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-data-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan for sensitive indicators
+        run: |
+          banned_patterns=(
+            "BEGIN PRIVATE KEY"
+            "BEGIN RSA PRIVATE KEY"
+            "password="
+            "api_key="
+            "secret="
+            "token="
+            "classified"
+            "internal-only"
+            "real facility"
+            "actual facility"
+            "live facility"
+            "production facility"
+            "badge id"
+            "ssn"
+            "social security"
+            "real incident"
+            "actual hostname"
+          )
+
+          found=0
+          scan_paths=(data examples docs/examples docs/playbooks)
+          for pattern in "${banned_patterns[@]}"; do
+            if grep -R -i --line-number "$pattern" "${scan_paths[@]}" 2>/dev/null; then
+              echo "::error::Potential sensitive data found matching pattern: $pattern"
+              found=1
+            fi
+          done
+
+          if [ "$found" -ne 0 ]; then
+            exit 1
+          fi
+          echo "No banned sensitive patterns detected. Synthetic or sanitized data check passed."

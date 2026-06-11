@@ -1,0 +1,111 @@
+name: Documentation Quality Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docs-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check internal markdown links and empty links
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+          import urllib.parse
+
+          root = Path('.')
+          markdown_files = [p for p in root.rglob('*.md') if '.git' not in p.parts]
+          link_pattern = re.compile(r'(?<!!)[\[]([^\]]+)\]\(([^)]+)\)')
+          errors = []
+
+          def anchor_from_heading(text):
+              text = text.strip().lower()
+              text = re.sub(r'[^a-z0-9\s-]', '', text)
+              text = re.sub(r'\s+', '-', text)
+              return text
+
+          heading_cache = {}
+          def anchors_for(path):
+              if path not in heading_cache:
+                  anchors = set()
+                  for line in path.read_text(encoding='utf-8', errors='ignore').splitlines():
+                      if line.startswith('#'):
+                          heading = line.lstrip('#').strip()
+                          if heading:
+                              anchors.add(anchor_from_heading(heading))
+                  heading_cache[path] = anchors
+              return heading_cache[path]
+
+          for md in markdown_files:
+              text = md.read_text(encoding='utf-8', errors='ignore')
+              for match in link_pattern.finditer(text):
+                  target = match.group(2).strip()
+                  if not target:
+                      errors.append(f'{md}: empty markdown link')
+                      continue
+                  if target.startswith(('http://', 'https://', 'mailto:', 'tel:')):
+                      continue
+                  if target.startswith('#'):
+                      anchor = urllib.parse.unquote(target[1:]).lower()
+                      if anchor and anchor not in anchors_for(md):
+                          errors.append(f'{md}: missing local anchor {target}')
+                      continue
+
+                  target_no_fragment, _, fragment = target.partition('#')
+                  target_no_query = target_no_fragment.split('?', 1)[0]
+                  if not target_no_query:
+                      continue
+                  resolved = (md.parent / urllib.parse.unquote(target_no_query)).resolve()
+                  try:
+                      resolved.relative_to(root.resolve())
+                  except ValueError:
+                      errors.append(f'{md}: link escapes repository: {target}')
+                      continue
+                  if not resolved.exists():
+                      errors.append(f'{md}: missing linked path: {target}')
+                      continue
+                  if fragment and resolved.is_file() and resolved.suffix.lower() == '.md':
+                      anchor = urllib.parse.unquote(fragment).lower()
+                      if anchor and anchor not in anchors_for(resolved):
+                          errors.append(f'{md}: missing anchor {target}')
+
+          if errors:
+              for error in errors:
+                  print(f'::error::{error}')
+              sys.exit(1)
+
+          print(f'Checked {len(markdown_files)} markdown file(s). Internal markdown links passed.')
+          PY
+
+      - name: Check required disclaimers and structure
+        run: |
+          missing=0
+          for file in README.md DOCTRINE.md LIMITATIONS.md NOTICE.md; do
+            if [ ! -f "$file" ]; then
+              echo "::error::Missing required documentation file: $file"
+              missing=1
+              continue
+            fi
+          done
+
+          for file in README.md DOCTRINE.md LIMITATIONS.md; do
+            if ! grep -qi "Limitations\|limited\|not a complete production system" "$file" 2>/dev/null; then
+              echo "::warning::Missing explicit limitations language in $file"
+            fi
+          done
+
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
+          echo "Documentation structure check completed."

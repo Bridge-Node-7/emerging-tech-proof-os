@@ -1,0 +1,84 @@
+name: Basic Security Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Secret scanning (baseline pattern check)
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          patterns = {
+              'AWS access key': r'AKIA[0-9A-Z]{16}',
+              'GitHub token': r'gh[pousr]_[0-9A-Za-z_]{30,}',
+              'Google API key': r'AIza[0-9A-Za-z\-_]{35}',
+              'Private key block': r'BEGIN (RSA |DSA |EC |OPENSSH |PGP )?PRIVATE KEY',
+              'password assignment': r'(?i)\bpassword\s*=',
+              'secret assignment': r'(?i)\bsecret\s*=',
+              'token assignment': r'(?i)\btoken\s*=',
+              'api key assignment': r'(?i)\bapi[_-]?key\s*=',
+              'client secret assignment': r'(?i)\bclient[_-]?secret\s*=',
+          }
+
+          allowed_suffixes = {
+              '.md', '.yml', '.yaml', '.json', '.txt', '.env', '.sh', '.py', '.js', '.ts', '.csv'
+          }
+          # These files are excluded to prevent self-matches on pattern strings. Update if files are renamed.
+          skip_paths = {
+              Path('.github/workflows/basic-security-check.yml'),
+              Path('.github/workflows/synthetic-data-check.yml'),
+          }
+
+          findings = []
+          for path in Path('.').rglob('*'):
+              if not path.is_file():
+                  continue
+              if '.git' in path.parts:
+                  continue
+              rel = path.relative_to('.')
+              if rel in skip_paths:
+                  continue
+              if path.suffix.lower() not in allowed_suffixes and path.name not in {'LICENSE', 'VERSION'}:
+                  continue
+              text = path.read_text(encoding='utf-8', errors='ignore')
+              for name, pattern in patterns.items():
+                  for match in re.finditer(pattern, text):
+                      line_no = text.count('\n', 0, match.start()) + 1
+                      findings.append(f'{rel}:{line_no}: potential {name}')
+
+          if findings:
+              for finding in findings:
+                  print(f'::error::{finding}')
+              sys.exit(1)
+
+          print('Baseline secret pattern scan passed.')
+          PY
+
+      - name: Workflow permission check
+        run: |
+          missing=0
+          for workflow in .github/workflows/*.yml; do
+            if ! grep -q "permissions:" "$workflow"; then
+              echo "::warning::$workflow does not declare explicit permissions"
+              missing=1
+            fi
+          done
+          echo "Workflow permission check completed."
+
+      - name: Dependency review placeholder
+        run: |
+          echo "Enable Dependabot and code scanning where available for production repositories."

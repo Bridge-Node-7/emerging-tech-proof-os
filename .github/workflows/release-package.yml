@@ -1,0 +1,113 @@
+name: Release Package Builder
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v1.2.0)'
+        required: true
+      notes:
+        description: 'High-level release notes'
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create release artifacts
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          NOTES="${{ github.event.inputs.notes }}"
+          mkdir -p release-artifacts
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import csv
+          import hashlib
+          import os
+          import re
+
+          version = os.environ.get('VERSION', '${{ github.event.inputs.version }}')
+          notes = os.environ.get('NOTES', '${{ github.event.inputs.notes }}')
+          out = Path('release-artifacts')
+          out.mkdir(exist_ok=True)
+
+          include_suffixes = {'.md', '.yml', '.yaml', '.json', '.txt', '.csv'}
+          include_names = {'LICENSE', 'VERSION', '.gitattributes'}
+          files = []
+          for path in sorted(Path('.').rglob('*')):
+              if not path.is_file():
+                  continue
+              if '.git' in path.parts or 'release-artifacts' in path.parts:
+                  continue
+              if path.suffix.lower() in include_suffixes or path.name in include_names:
+                  digest = hashlib.sha256(path.read_bytes()).hexdigest()
+                  files.append((str(path), path.suffix.lower().lstrip('.') or path.name, digest, path.stat().st_size))
+
+          with (out / 'artifact-manifest.csv').open('w', newline='', encoding='utf-8') as f:
+              writer = csv.writer(f)
+              writer.writerow(['path', 'type', 'sha256', 'size_bytes'])
+              writer.writerows(files)
+
+          with (out / 'sha256sums.txt').open('w', encoding='utf-8') as f:
+              for path, _type, digest, _size in files:
+                  f.write(f'{digest}  {path}\n')
+
+          evidence_cards = sorted(p for p in Path('docs/evidence-cards').glob('*.md') if p.name.lower() != 'readme.md') if Path('docs/evidence-cards').exists() else []
+          briefs = sorted(p for p in Path('docs/briefs').glob('*.md') if p.name.lower() != 'readme.md') if Path('docs/briefs').exists() else []
+
+          reviewed = 0
+          unreviewed = 0
+          for card in evidence_cards:
+              text = card.read_text(encoding='utf-8', errors='ignore')
+              match = re.search(r'^\s*\*\*Human Reviewer:\*\*\s*(.*)$', text, re.IGNORECASE | re.MULTILINE)
+              value = ''
+              if match:
+                  value = match.group(1).strip()
+                  if not value:
+                      remainder = text[match.end():]
+                      next_field = re.search(r'^\s*\*\*[^\n:]+:\*\*', remainder, re.MULTILINE)
+                      block = remainder[:next_field.start()] if next_field else remainder
+                      value = ' '.join(line.strip() for line in block.splitlines() if line.strip())
+              if value and '[' not in value and 'not reviewed' not in value.lower() and 'sample' not in value.lower():
+                  reviewed += 1
+              else:
+                  unreviewed += 1
+
+          summary = []
+          summary.append(f'# Evidence Summary for {version}')
+          summary.append('')
+          if notes:
+              summary.append(f'Notes: {notes}')
+              summary.append('')
+          summary.append(f'- Evidence cards found: {len(evidence_cards)}')
+          summary.append(f'- Evidence cards with completed reviewer field: {reviewed}')
+          summary.append(f'- Evidence cards requiring review or marked as sample: {unreviewed}')
+          summary.append(f'- Decision-ready briefs found: {len(briefs)}')
+          summary.append('')
+          if reviewed == len(evidence_cards) and evidence_cards:
+              summary.append('Review status: evidence cards include completed reviewer fields. Verify substance before public reliance.')
+          else:
+              summary.append('Review status: do not treat this release as fully validated until human review is complete.')
+          summary.append('')
+          summary.append('Automation checks structure and safety patterns. Human review remains the final validation gate.')
+          (out / 'evidence-summary.md').write_text('\n'.join(summary) + '\n', encoding='utf-8')
+          PY
+
+          echo "Release package created for $VERSION"
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+          NOTES: ${{ github.event.inputs.notes }}
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ github.event.inputs.version }}
+          path: release-artifacts/

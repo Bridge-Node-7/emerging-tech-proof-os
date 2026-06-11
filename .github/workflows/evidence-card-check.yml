@@ -1,0 +1,85 @@
+name: Evidence Card Check
+
+on:
+  pull_request:
+    paths:
+      - "docs/evidence-cards/**"
+      - "templates/evidence-card.md"
+  push:
+    branches: [main]
+    paths:
+      - "docs/evidence-cards/**"
+      - "templates/evidence-card.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence-card-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate evidence card fields
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          required_fields = [
+              'Claim',
+              'Source',
+              'Technology Area',
+              'TRL / MRL Estimate',
+              'Supply Chain Dependency',
+              'Critical Infrastructure Relevance',
+              'High-Impact Domain Relevance',
+              'AI Governance Relevance',
+              'Confidence',
+              'Validation Required',
+              'Decision Impact',
+              'Human Reviewer',
+              'Limitations',
+              'Date Created',
+              'Last Updated',
+          ]
+
+          files = sorted(Path('docs/evidence-cards').glob('*.md')) if Path('docs/evidence-cards').exists() else []
+          if not files:
+              print('::notice::No evidence cards found in docs/evidence-cards/. Add evidence cards before release if claims are being validated.')
+              sys.exit(0)
+
+          errors = []
+          placeholder_pattern = re.compile(r'^\s*(\[[^\]]+\]|TBD|TODO|N/A)?\s*$', re.IGNORECASE)
+
+          for path in files:
+              text = path.read_text(encoding='utf-8', errors='ignore')
+              for field in required_fields:
+                  pattern = re.compile(rf'^\s*\*\*{re.escape(field)}:\*\*\s*(.*)$', re.IGNORECASE | re.MULTILINE)
+                  match = pattern.search(text)
+                  if not match:
+                      errors.append(f'{path}: missing required field: {field}')
+                      continue
+
+                  after_label = match.group(1).strip()
+                  if after_label:
+                      value = after_label
+                  else:
+                      remainder = text[match.end():]
+                      next_field = re.search(r'^\s*\*\*[^\n:]+:\*\*', remainder, re.MULTILINE)
+                      value_block = remainder[:next_field.start()] if next_field else remainder
+                      value_lines = [line.strip() for line in value_block.splitlines() if line.strip()]
+                      value = ' '.join(value_lines).strip()
+
+                  if placeholder_pattern.match(value):
+                      errors.append(f'{path}: field has no substantive value: {field}')
+
+          if errors:
+              for error in errors:
+                  print(f'::error::{error}')
+              sys.exit(1)
+
+          print(f'Validated {len(files)} evidence card(s). Required fields contain values.')
+          PY
