@@ -33,7 +33,7 @@ Test the workflow on a real but public-safe project. Confirm that reviewers unde
 **Decision Impact:**
 Supports a decision to use this repository as a starting template for evidence-based emerging technology documentation.
 
-**Human Reviewer:**
+**Human Reviewer:** Public example reviewer role — demonstration only; not a real-world validation signoff.
 [Synthetic placeholder — replace with actual reviewer name or role upon real use]
 
 **Limitations:**
