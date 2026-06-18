@@ -1,95 +1,202 @@
 # Emerging Tech Proof OS
 
-**Repository template for transforming emerging technology claims into evidence cards, governance checks, and validated releases.**
+**Turn emerging technology claims into evidence cards, governance checks, and reviewed releases.**
 
-Emerging Tech Proof OS is a GitHub repository template for evidence-based emerging technology work. It gives a project a clear structure for claims, sources, confidence levels, AI-assisted review, human validation, workflow checks, and release artifacts.
+Emerging Tech Proof OS is a public-safe GitHub repository template for work where claims move faster than validation.
 
-This is not an app to install. It is a repository template you can copy, fork, or adapt.
+It helps people and AI-assisted workflows slow down hype, preserve evidence, show uncertainty, and make review visible.
 
-Start with [`START_HERE.md`](START_HERE.md). It explains the intended workflow for people and AI agents.
+This is a **public governance layer**, not a private engine.
 
-## What It Does
+It is designed to help public-facing projects show that their work is:
 
-It helps a project show that its work is:
+- **Useful** — the mission, use case, and decision context are clear.
+- **Governed** — claims are tied to sources, confidence levels, limitations, validation needs, and human review.
+- **Improving** — changes are checked, versioned, and released in a repeatable way.
 
-1. **Useful**: The mission, use cases, and decision context are clear.
-2. **Governed**: Claims are tied to sources, confidence levels, limitations, and review status.
-3. **Improving**: Changes are checked, versioned, and released in a repeatable way.
+Evidence over hype. Human judgment is final.
 
-## How People Use It
+---
 
-1. Copy or fork the repository.
-2. Add evidence cards for important claims.
-3. Use governance gates for AI-assisted or high-impact content.
-4. Use decision-ready briefs when a decision needs a structured summary.
-5. Run the GitHub Actions checks.
-6. Review changes before merging.
-7. Publish releases and documentation.
+## Why This Exists
 
-## What Is GitHub-Specific
+Emerging technology work can be noisy.
 
-The templates, doctrine, and evidence model can be used anywhere.
+AI, quantum materials, cybersecurity, critical infrastructure, advanced aerospace systems, supply chains, and other high-uncertainty domains can attract confident claims before the evidence is ready.
 
-The automation is GitHub-specific because it uses GitHub Actions, GitHub Pages, and GitHub release workflows.
+This repository gives teams a simple way to separate:
+
+- what is claimed
+- what is sourced
+- what is inferred
+- what is uncertain
+- what still needs validation
+- who reviewed it
+- what should or should not be released publicly
+
+The goal is not to publish everything.
+
+The goal is to publish responsibly.
+
+---
+
+## Public Discipline Boundary
+
+This repository is open so the governance method can be reused.
+
+The public instance may contain:
+
+- templates
+- workflows
+- synthetic examples
+- public-safe evidence cards
+- review checklists
+- release discipline
+- documentation that explains the standard
+
+The public instance must not contain:
+
+- private client work
+- proprietary scoring logic
+- patent strategy
+- sensitive supply chain intelligence
+- restricted or controlled information
+- credentials, keys, internal hostnames, or operational vulnerabilities
+- unsupported claims presented as validated truth
+
+Specific technology claims, commercial models, or sensitive evidence belong in private repositories or carefully redacted public releases under appropriate terms.
+
+Public proof should show discipline without exposing the private engine.
+
+---
 
 ## Core Workflow
 
 ```text
 Claim
   ↓
-Evidence card
+Evidence Card
   ↓
-Governance check
+Governance Check
   ↓
-Human review
+Human Review
   ↓
-Validated release
+Release Decision
 ```
+
+A release should only be called validated when the relevant evidence cards, governance checks, limitations, and human review are complete.
+
+Automation can check structure and safety patterns. It cannot decide truth.
+
+---
+
+## How People Use It
+
+1. Read `START_HERE.md`.
+2. Copy or fork the repository.
+3. Use `templates/evidence-card.md` for important claims.
+4. Use `templates/ai-governance-gate.md` for meaningful AI-assisted content.
+5. Use `templates/decision-ready-brief.md` when a decision needs a structured summary.
+6. Keep public examples synthetic, sanitized, or clearly public-safe.
+7. Run the GitHub Actions checks.
+8. Review before merging.
+9. Release only with limitations and review status visible.
+
+---
 
 ## Main Folders
 
 ```text
-.github/workflows/       GitHub Actions checks
+.github/workflows/       Baseline GitHub Actions checks
 docs/evidence-cards/     Completed evidence cards
-docs/briefs/             Completed decision-ready briefs
-docs/governance/         Completed governance gates or review notes
+docs/briefs/             Decision-ready briefs
+docs/governance/         Governance gates and review notes
 docs/playbooks/          Process guides and repeatable workflows
-docs/radar/              Scans, watchlists, and monitoring notes
-data/schemas/            Data schemas for structured artifacts
-data/synthetic/          Synthetic or sanitized data only
-examples/                Public-safe examples
-scripts/                 Helper scripts
-templates/               Reusable templates
+docs/radar/              Watchlists, scans, and monitoring notes
+data/schemas/            Data schemas
+data/synthetic/          Synthetic or public-safe sample data
+examples/                Public-safe example use cases
+release-artifacts/       Generated release summaries and checksums
+scripts/                 Helper scripts and future automation
+templates/               Reusable evidence, brief, and governance templates
 ```
 
-## Included Templates
+---
+
+## Current Templates
 
 - `templates/evidence-card.md`
-- `templates/decision-ready-brief.md`
 - `templates/ai-governance-gate.md`
+- `templates/decision-ready-brief.md`
 
-## Included Workflow Checks
+---
 
-- Repo health check
-- Documentation check
-- Evidence card check
-- Synthetic data safety check
-- Basic security check
-- Release package workflow
-- GitHub Pages deployment workflow
+## Current Checks
 
-## Operating Principles
+This foundation includes baseline checks for:
 
-- Evidence over hype.
-- Human judgment remains final.
-- AI output must be labeled, reviewed, and validated.
-- Public examples must use synthetic, sanitized, or public-safe information.
-- Releases should make changes, limitations, and validation status clear.
+- required files
+- markdown links and structure
+- common secret patterns
+- synthetic data safety
+- evidence card required fields
+- release artifact generation
+- GitHub Pages documentation publishing
 
-A release should be called validated only when the relevant evidence cards and review records show completed human review.
+These checks support review discipline. They do not replace expert review, security review, legal review, or human accountability.
+
+---
+
+## AI-Assisted Work
+
+AI may assist with drafting, organizing, summarizing, and consistency checking.
+
+AI does not replace evidence, judgment, validation, or responsibility.
+
+For meaningful AI-assisted content, record:
+
+- what the AI helped with
+- model used when relevant
+- observed facts vs inference
+- confidence level and limitations
+- validation required
+- human reviewer
+
+See `AI_PROVENANCE.md` and `templates/ai-governance-gate.md`.
+
+---
+
+## License and Boundaries
+
+The code, templates, documentation, and workflows in this repository are provided under the MIT License unless otherwise noted.
+
+See:
+
+- `LICENSE`
+- `NOTICE.md`
+- `IP_BOUNDARY.md`
+- `AI_PROVENANCE.md`
+- `TRADEMARKS.md`
+- `LIMITATIONS.md`
+
+This template is open for adoption. Specific proprietary work remains under the control of its originators.
+
+---
+
+## Contributing
+
+Read `CONTRIBUTING.md`, `DOCTRINE.md`, and `LIMITATIONS.md` before contributing.
+
+All contributions must respect the public discipline boundary and the evidence-over-hype standard.
+
+---
 
 ## Status
 
-v0.1.2 Foundation Skeleton.
+**v0.1.3 — Public Proof Boundary Release**
 
-This release is intentionally minimal. It is suitable as a starting point, not a fully hardened production system.
+This is a foundation skeleton. It is suitable as a starting point and public governance layer, not a hardened production system.
+
+For high-stakes research, policy, safety, security, funding, or operational use, supplement this template with expert review, production-grade controls, and appropriate legal, security, and compliance review.
+
+We are here now. Evidence over hype. Human judgment is final.

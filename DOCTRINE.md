@@ -1,71 +1,95 @@
 # Doctrine
 
-## Core Doctrine
+Emerging Tech Proof OS supports responsible work in domains where uncertainty is high and claims can move faster than validation.
 
-**Claim → Evidence → Governance → Review → Release**
+## Core Operating Principle
 
-Emerging technology work often contains uncertainty, incomplete evidence, and fast-moving claims. This repository provides a simple structure for handling that work responsibly.
+**Claim → Evidence → Governance → Human Review → Release Decision**
 
-## What Every Project Should Prove
+Every project using this structure should make three things visible:
 
-Every project using this template should make three things clear:
+1. **Usefulness**  
+   The problem, mission context, user, and decision need are clear.
 
-1. **Usefulness**: What problem does the work address?
-2. **Governance**: What evidence supports the work, what is uncertain, and who reviewed it?
-3. **Improvement**: What changed, what was validated, and what remains limited?
+2. **Governance**  
+   Claims are tied to sources, confidence levels, limitations, validation requirements, and review status.
 
-## Evidence Principle
+3. **Improvement**  
+   Changes are checked, versioned, and released in a repeatable way.
 
-A claim is not treated as validated until it has:
+## Evidence Over Hype
 
-- a source
-- a confidence level
-- known limitations
-- validation requirements
-- a human reviewer or review status
+- Claims must be specific enough to test, challenge, or validate.
+- Sources must be recorded.
+- Confidence levels must include justification.
+- Known limitations and assumptions must be carried forward.
+- Counter-evidence should be preserved, not buried.
+- AI-assisted content must separate observed facts from inference.
+- Human judgment remains the final gate.
 
-## AI Governance Principle
+## Public Discipline Boundary
 
-AI can help draft, organize, summarize, and check work.
+This is a **public governance layer**, not a private engine.
 
-AI does not replace evidence, judgment, validation, or responsibility.
+Public repositories and examples must contain only synthetic, sanitized, or clearly public-safe information.
 
-AI-assisted artifacts should clearly identify:
+The public instance must not contain:
 
-- observed facts
-- analysis or inference
-- confidence level
-- validation required
-- human reviewer
-- known limitations
-
-## Public Safety Principle
-
-Public repositories should not contain:
-
-- real credentials or private keys
-- internal hostnames or network details
-- classified, controlled, or restricted markings
+- credentials or private keys
+- internal hostnames or infrastructure details
 - personal data
-- real facility vulnerabilities
-- non-public incident details
-- sensitive operational data
+- private client work
+- proprietary scoring logic
+- patent strategy
+- restricted or controlled information
+- sensitive supply chain intelligence
+- unsupported claims presented as validated truth
 
-Use synthetic, sanitized, or clearly public information for examples.
+The governance method is open for adoption. Sensitive evidence, proprietary models, and organization-specific strategy belong in private repositories or redacted public releases under appropriate terms.
 
-## Release Principle
+## AI Assistance
 
-A useful release should make clear:
+AI may assist with drafting, organizing, summarizing, and checking consistency.
 
-- what changed
-- why it matters
-- what was checked
-- what is still limited
-- what files or artifacts are included
-- what should happen next
+AI does not replace:
 
-## Human Review Principle
+- source verification
+- expert judgment
+- security review
+- legal review
+- validation
+- human accountability
 
-Automation can check structure, consistency, and safety patterns.
+Any meaningful AI-assisted artifact should complete an AI governance gate before release.
 
-Human review remains the final gate for high-impact claims, public releases, and decision-ready outputs.
+## Human Review
+
+No evidence card, brief, or release should be treated as decision-ready until a human reviewer has accepted responsibility for the artifact and documented the review status.
+
+A sample artifact is not validated evidence.
+
+A structural check is not truth.
+
+A release note is not proof.
+
+## Release Discipline
+
+A release may only be described as validated when:
+
+- relevant evidence cards are complete
+- governance checks are complete
+- limitations are visible
+- human review is documented
+- release artifacts reflect the current files
+
+If any of those items are incomplete, describe the release as a foundation, sample, draft, or review-ready package instead.
+
+## Continuous Improvement
+
+This doctrine can be improved.
+
+Changes should preserve the core standard:
+
+**Evidence over hype. Human judgment is final. Public discipline protects what must be protected.**
+
+We are here now.

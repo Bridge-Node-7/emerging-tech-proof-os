@@ -2,6 +2,29 @@
 
 All notable changes to Emerging Tech Proof OS are documented here.
 
+## [v0.1.3] - 2026-06-17
+
+### Added
+- Added `IP_BOUNDARY.md` to clarify what belongs in public instances and what belongs in private or redacted releases.
+- Added `AI_PROVENANCE.md` to document AI assistance, human review, and accountability expectations.
+- Added `TRADEMARKS.md` to clarify brand and trademark boundaries.
+- Added `.github/CODEOWNERS` as starter review ownership discipline.
+
+### Changed
+- Rewrote `README.md` for clearer public positioning, simpler onboarding, and stronger public/private boundary language.
+- Tightened `DOCTRINE.md` around evidence-over-hype, human review, and release discipline.
+- Expanded `NOTICE.md` to clarify public scope, limitations, and user responsibilities.
+- Restructured `LIMITATIONS.md` for scannability and high-stakes use guidance.
+- Updated `SECURITY.md` to reinforce public-safe examples and production control expectations.
+- Improved `START_HERE.md` for both human maintainers and AI agents.
+- Sharpened `MISSION.md` around visible, auditable evidence packages.
+- Updated release artifacts for v0.1.3.
+
+### Fixed
+- Clarified sample evidence-card wording so synthetic demonstrations are not presented as validated evidence.
+- Preserved v0.1.2 workflows, templates, placeholders, license, contributing file, and repository structure.
+- Regenerated release artifact manifest and checksums after final file edits.
+
 ## [v0.1.2] - 2026-06-10
 
 ### Changed
